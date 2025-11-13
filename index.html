@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Englisch für Anfänger – Version 1.0</title>
+<style>
+:root {
+  --bg:#ffffff;
+  --circle-border:#87CEFA;
+  --text-blue:#0033a0;
+  --btn-blue:#0055A4;
+  --btn-red:#EF4135;
+  --muted:#666;
+  --shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+html,body {
+  height:100%;
+  margin:0;
+}
+body {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  padding:20px;
+}
+.wrap {
+  width:100%;
+  max-width:520px;
+  text-align:center;
+}
+h1 {
+  font-size:clamp(24px,5vw,36px);
+  font-weight:800;
+  color:var(--text-blue);
+  margin-bottom:4px;
+}
+.version {
+  font-size:clamp(14px,3vw,18px);
+  font-weight:400;
+  color:#333;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.flag {
+  display:inline-block;
+  width:36px;
+  height:18px;
+  background:url('https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg') center/cover no-repeat;
+  border:1px solid #ccc;
+  vertical-align:middle;
+}
+.circle-wrap {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:12px;
+}
+.circle {
+  width:min(90vw,420px);
+  height:min(90vw,420px);
+  border-radius:50%;
+  background:#fff;
+  border:6px solid var(--circle-border);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:6vw;
+  box-sizing:border-box;
+  user-select:none;
+  touch-action:manipulation;
+}
+.word {
+  font-size:clamp(36px,9vw,70px);
+  font-weight:700;
+  color:var(--text-blue);
+}
+.meaning {
+  margin-top:14px;
+  font-size:clamp(18px,5vw,28px);
+  color:#333;
+  text-align:center;
+}
+button {
+  border:0;
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  color:#fff;
+  font-size:16px;
+}
+#pick { background:var(--btn-blue); flex:1; min-width:100px; }
+#snapshot { background:var(--btn-red); flex:1; min-width:100px; }
+#speak { background:#0055A4; flex:1; min-width:100px; }
+.controls {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+.hint {
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+}
+@media (prefers-reduced-motion:no-preference) {
+  .circle { transition:transform .18s ease,box-shadow .18s ease; }
+  .circle:active { transform:scale(.98); }
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Englisch für Anfänger</h1>
+    <div class="version">Version 1.0 <span class="flag"></span></div>
+
+    <div class="circle-wrap">
+      <div id="circle" class="circle" title="Tippe hier für neuen Ausdruck">
+        <div id="word" class="word">Welcome!</div>
+        <div id="meaning" class="meaning">Willkommen!</div>
+      </div>
+    </div>
+
+    <div class="controls" role="group" aria-label="Steuerung">
+      <button id="pick">Neu</button>
+      <button id="snapshot">Snapshot</button>
+      <button id="speak">🔊 Vorlesen</button>
+    </div>
+
+    <div class="hint">Tippe auf den Kreis oder „Neu“, um eine neue Redewendung zu ziehen.</div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const items = [
+  {en:"Hello!", de:"Hallo!"},
+  {en:"Good morning!", de:"Guten Morgen!"},
+  {en:"Good morning!", de:"Guten Morgen!"},
+  {en:"Good evening!", de:"Guten Abend!"},
+  {en:"Good night!", de:"Gute Nacht!"},
+  {en:"How are you?", de:"Wie geht es dir?"},
+  {en:"I'm fine, thank you.", de:"Mir geht es gut, danke."},
+  {en:"What's your name?", de:"Wie heißt du?"},
+  {en:"My name is ...", de:"Ich heiße ..."},
+  {en:"Nice to meet you.", de:"Schön, dich kennenzulernen."},
+  {en:"See you later!", de:"Bis später!"},
+  {en:"Goodbye!", de:"Auf Wiedersehen!"},
+  {en:"Thank you!", de:"Danke!"},
+  {en:"Thanks a lot!", de:"Vielen Dank!"},
+  {en:"You're welcome!", de:"Gern geschehen!"},
+  {en:"Please.", de:"Bitte."},
+  {en:"Excuse me!", de:"Entschuldigung!"},
+  {en:"Sorry!", de:"Tut mir leid!"},
+  {en:"No problem.", de:"Kein Problem."},
+  {en:"Of course.", de:"Natürlich."},
+  {en:"I don't know.", de:"Ich weiß nicht."},
+  {en:"I understand.", de:"Ich verstehe."},
+  {en:"I don't understand.", de:"Ich verstehe nicht."},
+  {en:"Can you help me?", de:"Kannst du mir helfen?"},
+  {en:"Where are you from?", de:"Woher kommst du?"},
+  {en:"I'm from Germany.", de:"Ich komme aus Deutschland."},
+  {en:"How old are you?", de:"Wie alt bist du?"},
+  {en:"I'm twenty years old.", de:"Ich bin zwanzig Jahre alt."},
+  {en:"What time is it?", de:"Wie spät ist es?"},
+  {en:"It's five o'clock.", de:"Es ist fünf Uhr."},
+  {en:"See you tomorrow!", de:"Bis morgen!"},
+  {en:"Have a nice day!", de:"Einen schönen Tag!"},
+  {en:"Take care!", de:"Pass auf dich auf!"},
+  {en:"Good luck!", de:"Viel Glück!"},
+  {en:"Happy birthday!", de:"Alles Gute zum Geburtstag!"},
+  {en:"Congratulations!", de:"Herzlichen Glückwunsch!"},
+  {en:"Cheers!", de:"Prost!"},
+  {en:"Enjoy your meal!", de:"Guten Appetit!"},
+  {en:"What’s up?", de:"Was geht?"},
+  {en:"Not much.", de:"Nicht viel."},
+  {en:"I'm tired.", de:"Ich bin müde."},
+  {en:"I'm hungry.", de:"Ich bin hungrig."},
+  {en:"I'm thirsty.", de:"Ich bin durstig."},
+  {en:"Let's go!", de:"Los geht’s!"},
+  {en:"Come here!", de:"Komm her!"},
+  {en:"Sit down, please.", de:"Setz dich bitte."},
+  {en:"Stand up.", de:"Steh auf."},
+  {en:"Be quiet!", de:"Sei ruhig!"},
+  {en:"Listen!", de:"Hör zu!"},
+  {en:"Look!", de:"Schau!"},
+  {en:"Wait a moment.", de:"Warte einen Moment."},
+  {en:"One moment, please.", de:"Einen Moment bitte."},
+  {en:"I like it.", de:"Das gefällt mir."},
+  {en:"I love you.", de:"Ich liebe dich."},
+  {en:"I'm sorry.", de:"Es tut mir leid."},
+  {en:"Don't worry.", de:"Mach dir keine Sorgen."},
+  {en:"That's fine.", de:"Das ist in Ordnung."},
+  {en:"That's right.", de:"Das stimmt."},
+  {en:"That's wrong.", de:"Das ist falsch."},
+  {en:"Maybe.", de:"Vielleicht."},
+  {en:"Never mind.", de:"Schon gut."},
+  {en:"See you soon!", de:"Bis bald!"},
+  {en:"Can I help you?", de:"Kann ich Ihnen helfen?"},
+  {en:"Yes, please.", de:"Ja, bitte."},
+  {en:"No, thank you.", de:"Nein, danke."},
+  {en:"How much is it?", de:"Wie viel kostet das?"},
+  {en:"Too expensive!", de:"Zu teuer!"},
+  {en:"I’ll take it.", de:"Ich nehme es."},
+  {en:"Where is the station?", de:"Wo ist der Bahnhof?"},
+  {en:"Turn left.", de:"Biege links ab."},
+  {en:"Turn right.", de:"Biege rechts ab."},
+  {en:"Go straight ahead.", de:"Geh geradeaus."},
+  {en:"Stop here.", de:"Halt hier."},
+  {en:"Help!", de:"Hilfe!"},
+  {en:"Call the police!", de:"Rufen Sie die Polizei!"},
+  {en:"I need a doctor.", de:"Ich brauche einen Arzt."},
+
+  {en:"Good evening!", de:"Guten Abend!"},
+  {en:"Good night!", de:"Gute Nacht!"},
+  {en:"How are you?", de:"Wie geht es dir?"},
+  {en:"I'm fine, thank you.", de:"Mir geht es gut, danke."},
+
+  {en:"What's your name?", de:"Wie heißt du?"},
+  {en:"My name is ...", de:"Ich heiße ..."},
+  {en:"Nice to meet you.", de:"Schön, dich kennenzulernen."},
+  {en:"See you later!", de:"Bis später!"}
+];
+
+const wordEl = document.getElementById('word');
+const meaningEl = document.getElementById('meaning');
+const circle = document.getElementById('circle');
+
+function pickRandom() {
+  const item = items[Math.floor(Math.random() * items.length)];
+  wordEl.textContent = item.en;
+  meaningEl.textContent = item.de;
+}
+
+document.getElementById('pick').addEventListener('click', pickRandom);
+circle.addEventListener('click', pickRandom);
+
+document.getElementById('snapshot').addEventListener('click', () => {
+  html2canvas(circle, {backgroundColor:"#fff"}).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'englisch_snapshot.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+});
+
+document.getElementById('speak').addEventListener('click', () => {
+  const utterance = new SpeechSynthesisUtterance(wordEl.textContent);
+  utterance.lang = 'en-US';
+  const voices = speechSynthesis.getVoices();
+  const englishVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+  utterance.voice = englishVoice;
+  speechSynthesis.speak(utterance);
+});
+</script>
+</body>
+</html>
